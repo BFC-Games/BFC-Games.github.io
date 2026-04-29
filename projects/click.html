@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Click Speed Pro</title>
@@ -7,44 +7,44 @@
 <style>
 body {
   margin:0;
-  font-family:Arial;
-  background:#0a0a0a;
+  font-family:Arial, sans-serif;
+  background:#0b0b0b;
   color:white;
   overflow:hidden;
 }
 
-/* CENTER UI */
-#ui {
+/* CENTER PANEL */
+.panel {
   position:absolute;
   top:50%;
   left:50%;
   transform:translate(-50%,-50%);
+  width:320px;
   text-align:center;
   background:rgba(255,255,255,0.06);
-  padding:40px;
-  border-radius:18px;
-  backdrop-filter:blur(12px);
   border:1px solid rgba(255,255,255,0.12);
-  width:300px;
+  border-radius:16px;
+  padding:30px;
+  backdrop-filter:blur(10px);
 }
 
-/* BUTTON */
+/* BUTTONS */
 button {
   padding:12px 18px;
+  margin-top:10px;
   border:none;
   border-radius:10px;
   background:#00ff99;
   font-weight:bold;
   cursor:pointer;
-  transition:0.2s;
 }
 
 button:hover {
   transform:scale(1.05);
 }
 
-/* CLICK AREA */
-#clickArea {
+/* BIG CLICK AREA */
+#clickZone {
   position:fixed;
   top:0;
   left:0;
@@ -54,73 +54,80 @@ button:hover {
 
 /* TEXT */
 h1,h2,p {
-  margin:10px 0;
+  margin:8px 0;
 }
 </style>
 </head>
 
 <body>
 
-<div id="ui">
-  <h1>Click Speed</h1>
-  <p>Click as fast as possible in 5 seconds</p>
+<div class="panel">
+  <h1>Click Speed Test</h1>
+  <p>Click anywhere after start</p>
 
-  <button id="startBtn">Start</button>
+  <button id="startBtn">Start Game</button>
 
-  <h2 id="timer">5</h2>
-  <h2 id="score">0</h2>
+  <h2 id="time">Time: 5</h2>
+  <h2 id="score">Clicks: 0</h2>
+  <p id="status">Ready</p>
 </div>
 
-<div id="clickArea"></div>
+<div id="clickZone"></div>
 
 <script>
 let time = 5;
-let score = 0;
+let clicks = 0;
 let running = false;
-let interval;
+let timer = null;
 
 const startBtn = document.getElementById("startBtn");
-const timerText = document.getElementById("timer");
-const scoreText = document.getElementById("score");
-const clickArea = document.getElementById("clickArea");
+const timeEl = document.getElementById("time");
+const scoreEl = document.getElementById("score");
+const statusEl = document.getElementById("status");
+const clickZone = document.getElementById("clickZone");
 
-startBtn.onclick = startGame;
-
-function startGame(){
+/* START GAME */
+startBtn.onclick = () => {
   time = 5;
-  score = 0;
+  clicks = 0;
   running = true;
 
-  timerText.innerText = time;
-  scoreText.innerText = score;
+  timeEl.textContent = "Time: " + time;
+  scoreEl.textContent = "Clicks: " + clicks;
+  statusEl.textContent = "GO!";
 
-  clearInterval(interval);
+  clearInterval(timer);
 
-  interval = setInterval(()=>{
+  timer = setInterval(() => {
     time--;
-    timerText.innerText = time;
+    timeEl.textContent = "Time: " + time;
 
-    if(time <= 0){
+    if (time <= 0) {
       endGame();
     }
-  },1000);
-}
+  }, 1000);
+};
 
-clickArea.addEventListener("click", ()=>{
-  if(running){
-    score++;
-    scoreText.innerText = score;
-  }
+/* CLICK SYSTEM */
+clickZone.addEventListener("click", () => {
+  if (!running) return;
+
+  clicks++;
+  scoreEl.textContent = "Clicks: " + clicks;
 });
 
-function endGame(){
+/* END GAME */
+function endGame() {
   running = false;
-  clearInterval(interval);
+  clearInterval(timer);
 
-  document.getElementById("ui").innerHTML = `
-    <h1>Time Up</h1>
-    <h2>Score: ${score}</h2>
-    <button onclick="location.reload()">Restart</button>
+  statusEl.textContent = "Finished";
+
+  document.querySelector(".panel").innerHTML = `
+    <h1>Game Over</h1>
+    <h2>Your Score: ${clicks}</h2>
+    <p>Clicks per second: ${(clicks / 5).toFixed(2)}</p>
+    <button onclick="location.reload()">Play Again</button>
   `;
 }
 </script>
