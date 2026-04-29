@@ -13,24 +13,24 @@ body {
   overflow:hidden;
 }
 
-/* UI PANEL */
+/* CENTER UI */
 #ui {
   position:absolute;
   top:50%;
   left:50%;
   transform:translate(-50%,-50%);
   text-align:center;
-  background:rgba(255,255,255,0.05);
+  background:rgba(255,255,255,0.06);
   padding:40px;
-  border-radius:20px;
+  border-radius:18px;
   backdrop-filter:blur(12px);
-  border:1px solid rgba(255,255,255,0.1);
-  transition:0.3s;
+  border:1px solid rgba(255,255,255,0.12);
+  width:300px;
 }
 
 /* BUTTON */
 button {
-  padding:12px 20px;
+  padding:12px 18px;
   border:none;
   border-radius:10px;
   background:#00ff99;
@@ -43,31 +43,18 @@ button:hover {
   transform:scale(1.05);
 }
 
-/* BIG CLICK AREA */
+/* CLICK AREA */
 #clickArea {
   position:fixed;
-  width:100%;
-  height:100%;
   top:0;
   left:0;
+  width:100%;
+  height:100%;
 }
 
-/* FADE STATES */
-.fade {
-  opacity:0;
-  transform:scale(0.95);
-  pointer-events:none;
-}
-
-.show {
-  opacity:1;
-  transform:scale(1);
-}
-
-/* ANIMATION TEXT */
-#timer {
-  font-size:2rem;
-  margin-top:10px;
+/* TEXT */
+h1,h2,p {
+  margin:10px 0;
 }
 </style>
 </head>
@@ -75,39 +62,43 @@ button:hover {
 <body>
 
 <div id="ui">
-  <h1>Click Speed Test</h1>
-  <p>Click as fast as you can in 5 seconds</p>
+  <h1>Click Speed</h1>
+  <p>Click as fast as possible in 5 seconds</p>
 
-  <button onclick="startGame()">Start</button>
+  <button id="startBtn">Start</button>
 
-  <div id="timer">5</div>
+  <h2 id="timer">5</h2>
   <h2 id="score">0</h2>
 </div>
 
 <div id="clickArea"></div>
 
 <script>
-let state = "menu";
 let time = 5;
 let score = 0;
+let running = false;
 let interval;
 
-const ui = document.getElementById("ui");
-const timer = document.getElementById("timer");
+const startBtn = document.getElementById("startBtn");
+const timerText = document.getElementById("timer");
 const scoreText = document.getElementById("score");
 const clickArea = document.getElementById("clickArea");
 
-/* GAME START */
+startBtn.onclick = startGame;
+
 function startGame(){
-  state = "playing";
   time = 5;
   score = 0;
+  running = true;
 
-  ui.classList.add("show");
+  timerText.innerText = time;
+  scoreText.innerText = score;
+
+  clearInterval(interval);
 
   interval = setInterval(()=>{
     time--;
-    timer.innerText = time;
+    timerText.innerText = time;
 
     if(time <= 0){
       endGame();
@@ -115,23 +106,20 @@ function startGame(){
   },1000);
 }
 
-/* CLICK SYSTEM */
 clickArea.addEventListener("click", ()=>{
-  if(state === "playing"){
+  if(running){
     score++;
     scoreText.innerText = score;
   }
 });
 
-/* END GAME */
 function endGame(){
+  running = false;
   clearInterval(interval);
-  state = "end";
 
-  ui.innerHTML = `
-    <h1>Time's Up</h1>
-    <p>Score:</p>
-    <h2>${score}</h2>
+  document.getElementById("ui").innerHTML = `
+    <h1>Time Up</h1>
+    <h2>Score: ${score}</h2>
     <button onclick="location.reload()">Restart</button>
   `;
 }
