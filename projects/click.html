@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Click Speed Pro</title>
+
+<style>
+body {
+  margin:0;
+  font-family:Arial;
+  background:#0a0a0a;
+  color:white;
+  overflow:hidden;
+}
+
+/* UI PANEL */
+#ui {
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center;
+  background:rgba(255,255,255,0.05);
+  padding:40px;
+  border-radius:20px;
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.1);
+  transition:0.3s;
+}
+
+/* BUTTON */
+button {
+  padding:12px 20px;
+  border:none;
+  border-radius:10px;
+  background:#00ff99;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+button:hover {
+  transform:scale(1.05);
+}
+
+/* BIG CLICK AREA */
+#clickArea {
+  position:fixed;
+  width:100%;
+  height:100%;
+  top:0;
+  left:0;
+}
+
+/* FADE STATES */
+.fade {
+  opacity:0;
+  transform:scale(0.95);
+  pointer-events:none;
+}
+
+.show {
+  opacity:1;
+  transform:scale(1);
+}
+
+/* ANIMATION TEXT */
+#timer {
+  font-size:2rem;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="ui">
+  <h1>Click Speed Test</h1>
+  <p>Click as fast as you can in 5 seconds</p>
+
+  <button onclick="startGame()">Start</button>
+
+  <div id="timer">5</div>
+  <h2 id="score">0</h2>
+</div>
+
+<div id="clickArea"></div>
+
+<script>
+let state = "menu";
+let time = 5;
+let score = 0;
+let interval;
+
+const ui = document.getElementById("ui");
+const timer = document.getElementById("timer");
+const scoreText = document.getElementById("score");
+const clickArea = document.getElementById("clickArea");
+
+/* GAME START */
+function startGame(){
+  state = "playing";
+  time = 5;
+  score = 0;
+
+  ui.classList.add("show");
+
+  interval = setInterval(()=>{
+    time--;
+    timer.innerText = time;
+
+    if(time <= 0){
+      endGame();
+    }
+  },1000);
+}
+
+/* CLICK SYSTEM */
+clickArea.addEventListener("click", ()=>{
+  if(state === "playing"){
+    score++;
+    scoreText.innerText = score;
+  }
+});
+
+/* END GAME */
+function endGame(){
+  clearInterval(interval);
+  state = "end";
+
+  ui.innerHTML = `
+    <h1>Time's Up</h1>
+    <p>Score:</p>
+    <h2>${score}</h2>
+    <button onclick="location.reload()">Restart</button>
+  `;
+}
+</script>
+
+</body>
+</html>
